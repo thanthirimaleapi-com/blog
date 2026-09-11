@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="si" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Mix Blog | ශ්‍රී ලංකාවේ බ්ලොග් අඩවිය</title>
+    <meta name="description" content="E-Mix Blog - ශ්‍රී ලංකාවේ ලිපි, පින්තූර, වීඩියෝ සහ දැන්වීම්">
+    <meta property="og:title" content="E-Mix Blog - ශ්‍රී ලංකාවේ බ්ලොග් අඩවිය">
+    <meta property="og:description" content="ලංකාවේ ලිපි, පින්තූර, වීඩියෝ සහ දැන්වීම්">
+    <meta property="og:type" content="website">
+    <!-- Google AdSense (ඔබේ client ID එක ඇතුළත් කරන්න) -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Noto+Serif+Sinhala:wght@400;500;600;700;800;900&family=Noto+Sans+Sinhala:wght@400;500;600;700;800;900&family=Noto+Sans+Tamil:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            /* ශ්‍රී ලංකා ජාතික ධජයේ වර්ණ */
+            --maroon: #8D153A;           /* ප්‍රධාන මැරූන් */
+            --maroon-dark: #5D0E26;      /* ගැඹුරු මැරූන් */
+            --maroon-light: #B01E4A;     /* ලා මැරූන් */
+            --gold: #FFB700;             /* රන්වන් */
+            --gold-dark: #D99A00;        /* ගැඹුරු රන්වන් */
+            --gold-light: #FFCF4D;       /* ලා රන්වන් */
+            --orange: #FF7900;           /* තැඹිලි */
+            --green: #00534E;            /* කොළ */
+            --green-light: #0A7B73;      /* ලා කොළ */
+            --cream: #FFF8E7;            /* ක්‍රීම් පසුබිම */
+            --cream-dark: #F5EBD1;       /* ගැඹුරු ක්‍රීම් */
+            --sand: #E8D9B5;             /* වැලි වර්ණය */
+            
+            /* ප්‍රධාන වර්ණ */
+            --primary: var(--maroon);
+            --primary-dark: var(--maroon-dark);
+            --accent: var(--gold);
+            --accent-hover: var(--gold-dark);
+            
+            /* පසුබිම */
+            --bg: #FDFBF5;
+            --bg-card: #FFFFFF;
+            --bg-dark: var(--maroon-dark);
+            --bg-header: var(--maroon);
+            
+            /* පෙළ */
+            --text: #2A1810;
+            --text-light: #6B5D52;
+            --text-white: #FFFFFF;
+            --text-gold: var(--gold);
+            
+            /* මායිම් */
+            --border: #E8D9B5;
+            --border-gold: rgba(255, 183, 0, 0.4);
+            
+            /* සෙවනැලි */
+            --shadow: 0 4px 20px rgba(141, 21, 58, 0.08);
+            --shadow-lg: 0 8px 40px rgba(141, 21, 58, 0.15);
+            --shadow-gold: 0 4px 16px rgba(255, 183, 0, 0.35);
+            
+            /* අනෙකුත් */
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-sinhala: 'Noto Serif Sinhala', 'Abhaya Libre', serif;
+            --font-sinhala-sans: 'Noto Sans Sinhala', sans-serif;
+            --font-tamil: 'Noto Sans Tamil', sans-serif;
+            --font-english: 'Inter', sans-serif;
+            --max-width: 1200px;
+            --nav-height: 75px;
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: var(--font-sinhala);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: calc(80px + var(--safe-bottom));
+            transition: background var(--transition), color var(--transition);
+            /* සියුම් ලංකා රටාවක් */
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(255, 183, 0, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(141, 21, 58, 0.04) 0%, transparent 40%);
+        }
+        body[dir="ltr"] { font-family: var(--font-english); }
+        body[dir="ltr"][data-lang="ta"] { font-family: var(--font-tamil); }
+        body[data-lang="si"] { font-family: var(--font-sinhala); }
+
+        /* Preloader */
+        #preloader { position: fixed; inset: 0; background: var(--maroon); display: flex; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.5s, visibility 0.5s; }
+        #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-ring { width: 60px; height: 60px; border: 4px solid rgba(255, 183, 0, 0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Header - මැරූන් පැහැති සම්ප්‍රදායික ලංකා හෙඩරය */
+        .site-header { 
+            position: fixed; 
+            top: 0; left: 0; right: 0; 
+            z-index: 1000; 
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+            box-shadow: 0 4px 20px rgba(141, 21, 58, 0.3);
+            height: var(--nav-height); 
+            display: flex; 
+            align-items: center; 
+            transition: background var(--transition);
+            border-bottom: 3px solid var(--gold);
+            position: relative;
+        }
+        .site-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green) 0%, var(--green) 25%, var(--gold) 25%, var(--gold) 50%, var(--orange) 50%, var(--orange) 75%, var(--maroon) 75%, var(--maroon) 100%);
+        }
+        .site-header .container { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 12px; 
+            width: 100%; 
+            max-width: var(--max-width); 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
+        .logo-icon { 
+            width: 46px; height: 46px; 
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 900; 
+            font-size: 22px; 
+            color: var(--maroon); 
+            letter-spacing: -0.5px; 
+            box-shadow: 0 0 0 3px rgba(255, 183, 0, 0.3), 0 4px 16px rgba(255, 183, 0, 0.5);
+            border: 2px solid var(--gold-light);
+            position: relative;
+        }
+        .logo-icon::after {
+            content: '✦';
+            position: absolute;
+            font-size: 10px;
+            top: -4px; right: -4px;
+            color: var(--gold);
+            background: var(--maroon-dark);
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--gold);
+        }
+        .logo-text { 
+            font-family: 'Abhaya Libre', var(--font-sinhala); 
+            font-size: 22px; 
+            font-weight: 800; 
+            color: #FFFFFF; 
+            letter-spacing: 0.3px;
+            line-height: 1.1;
+        }
+        .logo-text span { color: var(--gold); }
+        .logo-text small {
+            display: block;
+            font-size: 10px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: var(--font-english);
+        }
+
+        .nav-links { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .nav-link { 
+            color: rgba(255, 255, 255, 0.9); 
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 14px; 
+            padding: 8px 16px; 
+            border-radius: 24px; 
+            transition: all var(--transition); 
+            white-space: nowrap; 
+            cursor: pointer; 
+            border: 1px solid transparent; 
+            background: none; 
+            font-family: inherit; 
+        }
+        .nav-link:hover { 
+            color: var(--gold); 
+            background: rgba(255, 183, 0, 0.12); 
+            border-color: var(--border-gold);
+        }
+        .nav-link.active { 
+            background: var(--gold); 
+            color: var(--maroon-dark); 
+            box-shadow: 0 4px 12px rgba(255, 183, 0, 0.4);
+            font-weight: 700;
+        }
+
+        .lang-switcher { 
+            display: flex; 
+            gap: 2px; 
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 20px; 
+            padding: 3px; 
+            flex-shrink: 0; 
+            border: 1px solid rgba(255, 183, 0, 0.3);
+        }
+        .lang-btn { 
+            border: none; 
+            background: none; 
+            color: rgba(255, 255, 255, 0.75); 
+            font-weight: 700; 
+            font-size: 11px; 
+            padding: 6px 12px; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            transition: all var(--transition); 
+            font-family: inherit; 
+            letter-spacing: 0.3px; 
+        }
+        .lang-btn:hover { color: var(--gold); }
+        .lang-btn.active { 
+            background: var(--gold); 
+            color: var(--maroon-dark); 
+            box-shadow: 0 2px 8px rgba(255, 183, 0, 0.5);
+        }
+
+        .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 8px; }
+        .hamburger span { width: 24px; height: 2.5px; background: var(--gold); border-radius: 2px; transition: all var(--transition); }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* Bottom nav */
+        .bottom-nav { 
+            position: fixed; 
+            bottom: 0; left: 0; right: 0; 
+            z-index: 999; 
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+            border-top: 3px solid var(--gold);
+            display: none; 
+            align-items: center; 
+            justify-content: space-around; 
+            padding: 8px 4px calc(8px + var(--safe-bottom)); 
+            box-shadow: 0 -4px 20px rgba(141, 21, 58, 0.2);
+        }
+        .bottom-nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 2px; 
+            text-decoration: none; 
+            color: rgba(255, 255, 255, 0.65); 
+            font-size: 10px; 
+            font-weight: 600; 
+            transition: color var(--transition); 
+            cursor: pointer; 
+            border: none; 
+            background: none; 
+            font-family: inherit; 
+            padding: 4px 8px; 
+            border-radius: 8px; 
+        }
+        .bottom-nav-item svg { width: 22px; height: 22px; fill: currentColor; transition: transform var(--transition); }
+        .bottom-nav-item.active { color: var(--gold); }
+        .bottom-nav-item.active svg { transform: scale(1.15); }
+        .bottom-nav-item:hover { color: var(--gold); }
+
+        /* Main content */
+        .main-content { 
+            padding-top: var(--nav-height); 
+            min-height: calc(100vh - var(--nav-height)); 
+            max-width: var(--max-width); 
+            margin: 0 auto; 
+            padding-left: 20px; 
+            padding-right: 20px; 
+        }
+        .page-section { display: none; padding: 30px 0 40px; animation: fadeInUp 0.4s ease; }
+        .page-section.active { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title { 
+            font-family: 'Abhaya Libre', var(--font-sinhala);
+            font-size: 28px; 
+            font-weight: 800; 
+            margin-bottom: 6px; 
+            color: var(--maroon); 
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            padding-bottom: 12px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 60px; height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--orange));
+            border-radius: 2px;
+        }
+        .section-subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 24px; font-weight: 500; font-family: var(--font-sinhala-sans); }
+
+        /* Hero - සම්ප්‍රදායික ලංකා ස්වරූපය */
+        .hero { 
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 60%, #3D081A 100%);
+            border-radius: var(--radius); 
+            padding: 48px 40px; 
+            color: #fff; 
+            margin-bottom: 32px; 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--gold);
+            box-shadow: 0 8px 40px rgba(141, 21, 58, 0.3), inset 0 0 0 1px rgba(255, 183, 0, 0.2);
+        }
+        .hero::before { 
+            content: ''; 
+            position: absolute; 
+            top: -50%; right: -20%; 
+            width: 400px; height: 400px; 
+            background: radial-gradient(circle, rgba(255, 183, 0, 0.18) 0%, transparent 65%); 
+            border-radius: 50%; 
+        }
+        .hero::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -30%; left: -15%; 
+            width: 350px; height: 350px; 
+            background: radial-gradient(circle, rgba(255, 121, 0, 0.15) 0%, transparent 65%); 
+            border-radius: 50%; 
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero-badge { 
+            display: inline-flex; 
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); 
+            color: var(--maroon-dark);
+            padding: 8px 20px; 
+            border-radius: 24px; 
+            font-size: 12px; 
+            font-weight: 800; 
+            margin-bottom: 16px; 
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-family: var(--font-sinhala-sans);
+            box-shadow: 0 4px 16px rgba(255, 183, 0, 0.4);
+        }
+        .hero h1 { 
+            font-family: 'Abhaya Libre', var(--font-sinhala);
+            font-size: clamp(32px, 6vw, 52px); 
+            font-weight: 800; 
+            line-height: 1.1; 
+            margin-bottom: 12px; 
+            letter-spacing: -0.5px;
+        }
+        .hero h1 .highlight { 
+            color: var(--gold); 
+            text-shadow: 0 2px 20px rgba(255, 183, 0, 0.5);
+        }
+        .hero p { 
+            font-size: 16px; 
+            color: rgba(255, 248, 231, 0.85); 
+            max-width: 560px; 
+            margin-bottom: 28px; 
+            font-weight: 400;
+            line-height: 1.7;
+        }
+        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            padding: 14px 28px; 
+            border-radius: 30px; 
+            font-weight: 700; 
+            font-size: 14px; 
+            text-decoration: none; 
+            cursor: pointer; 
+            border: none; 
+            transition: all var(--transition); 
+            font-family: var(--font-sinhala-sans); 
+            letter-spacing: 0.3px; 
+            white-space: nowrap; 
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); 
+            color: var(--maroon-dark); 
+            box-shadow: 0 4px 16px rgba(255, 183, 0, 0.45);
+            border: 1px solid var(--gold-light);
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%); 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 28px rgba(255, 183, 0, 0.6);
+        }
+        .btn-secondary { 
+            background: rgba(255, 255, 255, 0.12); 
+            color: #fff; 
+            border: 1.5px solid rgba(255, 183, 0, 0.5);
+        }
+        .btn-secondary:hover { 
+            background: rgba(255, 183, 0, 0.2); 
+            border-color: var(--gold);
+            transform: translateY(-2px); 
+        }
+        .btn-outline { 
+            background: transparent; 
+            color: var(--maroon); 
+            border: 2px solid var(--maroon); 
+        }
+        .btn-outline:hover { 
+            background: var(--maroon); 
+            color: #fff; 
+            transform: translateY(-2px); 
+        }
+        .btn-sm { padding: 10px 20px; font-size: 12px; border-radius: 24px; }
+        .btn-xs { padding: 7px 14px; font-size: 11px; border-radius: 20px; font-weight: 700; }
+
+        /* Cards Grid */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; margin-top: 16px; }
+        .card { 
+            background: var(--bg-card); 
+            border-radius: var(--radius); 
+            box-shadow: var(--shadow); 
+            overflow: hidden; 
+            transition: all var(--transition); 
+            border: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--orange), var(--green));
+            opacity: 0;
+            transition: opacity var(--transition);
+            z-index: 3;
+        }
+        .card:hover { 
+            transform: translateY(-6px); 
+            box-shadow: var(--shadow-lg); 
+            border-color: var(--gold); 
+        }
+        .card:hover::before { opacity: 1; }
+        .card-media { 
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 16/10; 
+            overflow: hidden; 
+            background: var(--cream-dark); 
+            flex-shrink: 0; 
+            cursor: pointer; 
+        }
+        .card-media img, .card-media video { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .card:hover .card-media img, .card:hover .card-media video { transform: scale(1.08); }
+        .card-media .placeholder-img { 
+            width: 100%; height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 56px; 
+            background: linear-gradient(135deg, var(--cream-dark), var(--sand));
+            color: var(--maroon);
+            opacity: 0.5;
+        }
+        .card-badge { 
+            position: absolute; 
+            top: 14px; left: 14px; 
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); 
+            color: var(--maroon-dark); 
+            padding: 5px 14px; 
+            border-radius: 14px; 
+            font-size: 10px; 
+            font-weight: 800; 
+            letter-spacing: 1px; 
+            z-index: 2; 
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+            text-transform: uppercase;
+            font-family: var(--font-sinhala-sans);
+        }
+        .card-badge.ad { 
+            background: linear-gradient(135deg, var(--orange) 0%, #E06800 100%); 
+            color: #fff;
+        }
+        .card-body { padding: 20px 20px 22px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .card-title { 
+            font-family: 'Abhaya Libre', var(--font-sinhala);
+            font-size: 19px; 
+            font-weight: 700; 
+            line-height: 1.3; 
+            color: var(--maroon-dark); 
+            cursor: pointer; 
+            transition: color var(--transition);
+        }
+        .card-title:hover { color: var(--maroon); }
+        .card-desc { 
+            font-size: 14px; 
+            color: var(--text-light); 
+            line-height: 1.6; 
+            flex: 1; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+            font-family: var(--font-sinhala-sans);
+        }
+        .card-meta { 
+            font-size: 11px; 
+            color: var(--text-light); 
+            margin-top: 4px; 
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-sinhala-sans);
+            font-weight: 600;
+        }
+        .card-meta::before {
+            content: '◆';
+            color: var(--gold);
+            font-size: 8px;
+        }
+        .card-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .card-actions .btn { flex: 1; justify-content: center; padding: 9px 10px; font-size: 11px; border-radius: 20px; min-width: 0; }
+
+        /* Empty state */
+        .empty-state { 
+            text-align: center; 
+            padding: 60px 20px; 
+            color: var(--text-light); 
+            background: var(--cream);
+            border-radius: var(--radius);
+            border: 2px dashed var(--border);
+        }
+        .empty-state .empty-icon { font-size: 72px; margin-bottom: 20px; opacity: 0.4; }
+        .empty-state h3 { 
+            font-family: 'Abhaya Libre', var(--font-sinhala);
+            font-size: 20px; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            color: var(--maroon); 
+        }
+
+        /* Filter tabs */
+        .filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filter-tab { 
+            padding: 10px 22px; 
+            border-radius: 24px; 
+            border: 1.5px solid var(--border); 
+            background: var(--bg-card); 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 13px; 
+            transition: all var(--transition); 
+            font-family: var(--font-sinhala-sans); 
+            color: var(--text); 
+            white-space: nowrap; 
+        }
+        .filter-tab:hover { border-color: var(--gold); color: var(--maroon); }
+        .filter-tab.active { 
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); 
+            color: var(--maroon-dark); 
+            border-color: var(--gold); 
+            box-shadow: 0 4px 14px rgba(255, 183, 0, 0.4);
+            font-weight: 700;
+        }
+
+        /* AdSense Container */
+        .ad-container { 
+            background: var(--cream); 
+            border-radius: var(--radius-sm); 
+            padding: 20px; 
+            margin: 24px 0; 
+            text-align: center; 
+            color: var(--text-light); 
+            font-size: 12px; 
+            border: 2px dashed var(--border); 
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-sinhala-sans);
+        }
+        .ad-container:empty::before { content: "📢 දැන්වීම් ස්ථානය - Advertisement"; font-weight: 600; letter-spacing: 1px; }
+
+        /* Admin */
+        .admin-login-form { 
+            max-width: 420px; 
+            margin: 60px auto; 
+            background: var(--bg-card); 
+            border-radius: var(--radius); 
+            padding: 40px 32px; 
+            box-shadow: var(--shadow-lg); 
+            border: 2px solid var(--border);
+            border-top: 5px solid var(--gold);
+        }
+        .admin-login-form h2 { 
+            font-family: 'Abhaya Libre', var(--font-sinhala);
+            font-size: 26px; 
+            font-weight: 800; 
+            margin-bottom: 6px; 
+            text-align: center; 
+            color: var(--maroon);
+        }
+        .admin-login-form .subtitle { text-align: center; font-size: 13px; color: var(--text-light); margin-bottom: 24px; font-family: var(--font-sinhala-sans); }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { 
+            display: block; 
+            font-size: 13px; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            color: var(--maroon-dark);
+            font-family: var(--font-sinhala-sans);
+        }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; 
+            padding: 13px 18px; 
+            border-radius: var(--radius-sm); 
+            border: 1.5px solid var(--border); 
+            font-size: 14px; 
+            font-family: inherit; 
+            transition: all var(--transition); 
+            background: var(--bg); 
+            color: var(--text); 
+            outline: none; 
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
+            border-color: var(--gold); 
+            box-shadow: 0 0 0 4px rgba(255, 183, 0, 0.15); 
+            background: #fff;
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .admin-dashboard { display: none; padding: 20px 0; }
+        .admin-dashboard.active { display: block; animation: fadeInUp 0.3s ease; }
+        .admin-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--border); }
+        .admin-header h2 { 
+            font-family: 'Abhaya Libre', var(--font-sinhala);
+            font-size: 24px; 
+            font-weight: 800; 
+            color: var(--maroon);
+        }
+        .admin-tabs { 
+            display: flex; 
+            gap: 6px; 
+            flex-wrap: wrap; 
+            margin-bottom: 24px; 
+            background: var(--bg-card); 
+            padding: 6px; 
+            border-radius: 14px; 
+            box-shadow: var(--shadow); 
+            border: 1.5px solid var(--border); 
+        }
+        .admin-tab { 
+            padding: 12px 20px; 
+            border-radius: 10px; 
+            border: none; 
+            background: none; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 13px; 
+            transition: all var(--transition); 
+            font-family: var(--font-sinhala-sans); 
+            color: var(--text-light); 
+            flex: 1; 
+            text-align: center; 
+            white-space: nowrap; 
+        }
+        .admin-tab:hover { color: var(--maroon); background: rgba(255, 183, 0, 0.1); }
+        .admin-tab.active { 
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); 
+            color: var(--maroon-dark); 
+            box-shadow: 0 4px 12px rgba(255, 183, 0, 0.4);
+        }
+        .admin-panel { display: none; }
+        .admin-panel.active { display: block; animation: fadeInUp 0.3s ease; }
+        .admin-item-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 460px; overflow-y: auto; padding-right: 4px; }
+        .admin-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            background: var(--bg-card); 
+            padding: 12px 16px; 
+            border-radius: var(--radius-sm); 
+            border: 1.5px solid var(--border); 
+            transition: all var(--transition); 
+            flex-wrap: wrap; 
+        }
+        .admin-item:hover { border-color: var(--gold); box-shadow: var(--shadow); }
+        .admin-item img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: var(--cream-dark); border: 1px solid var(--border); }
+        .admin-item-info { flex: 1; min-width: 140px; }
+        .admin-item-info .name { font-weight: 700; font-size: 15px; color: var(--maroon-dark); }
+        .admin-item-info .meta { font-size: 12px; color: var(--text-light); margin-top: 2px; font-family: var(--font-sinhala-sans); }
+        .admin-item-actions { display: flex; gap: 6px; }
+        .admin-item-actions .btn { padding: 7px 12px; font-size: 11px; border-radius: 16px; }
+        .settings-form { 
+            background: var(--bg-card); 
+            border-radius: var(--radius); 
+            padding: 28px; 
+            box-shadow: var(--shadow); 
+            border: 1.5px solid var(--border);
+            border-top: 4px solid var(--gold);
+        }
+        .settings-form h3 {
+            font-family: 'Abhaya Libre', var(--font-sinhala);
+            color: var(--maroon);
+            font-size: 20px;
+        }
+
+        /* Toast */
+        .toast-container { position: fixed; top: 90px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { 
+            padding: 16px 24px; 
+            border-radius: var(--radius-sm); 
+            color: #fff; 
+            font-weight: 600; 
+            font-size: 14px; 
+            box-shadow: var(--shadow-lg); 
+            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards; 
+            max-width: 360px; 
+            font-family: var(--font-sinhala-sans);
+            border-left: 4px solid;
+        }
+        .toast.success { background: linear-gradient(135deg, var(--green), var(--green-light)); border-color: var(--gold); }
+        .toast.error { background: linear-gradient(135deg, #C0392B, #E74C3C); border-color: var(--gold); }
+        .toast.info { background: linear-gradient(135deg, var(--maroon), var(--maroon-light)); border-color: var(--gold); }
+        @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateX(50px); } }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(61, 8, 26, 0.7); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(6px); }
+        .modal-overlay.open { display: flex; }
+        .modal-content { 
+            background: var(--bg-card); 
+            border-radius: var(--radius); 
+            padding: 32px 28px; 
+            max-width: 520px; 
+            width: 100%; 
+            max-height: 88vh; 
+            overflow-y: auto; 
+            box-shadow: var(--shadow-lg); 
+            border: 2px solid var(--gold); 
+            animation: fadeInUp 0.3s ease; 
+        }
+        .modal-content h3 { 
+            font-family: 'Abhaya Libre', var(--font-sinhala);
+            font-size: 22px; 
+            font-weight: 800; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            color: var(--maroon);
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .modal-close { 
+            float: right; 
+            background: none; 
+            border: none; 
+            font-size: 26px; 
+            cursor: pointer; 
+            color: var(--maroon); 
+            transition: all var(--transition); 
+            font-family: inherit; 
+            line-height: 1; 
+            padding: 4px;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+        }
+        .modal-close:hover { color: var(--gold); background: rgba(255, 183, 0, 0.1); }
+
+        /* WhatsApp Float */
+        .whatsapp-float { 
+            position: fixed; 
+            bottom: 100px; right: 20px; 
+            z-index: 998; 
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            border-radius: 50%; 
+            width: 60px; height: 60px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 6px 24px rgba(37, 211, 102, 0.5); 
+            transition: transform var(--transition); 
+            text-decoration: none; 
+            border: 2px solid var(--gold);
+        }
+        .whatsapp-float:hover { transform: scale(1.12) rotate(5deg); }
+        .whatsapp-float svg { width: 32px; height: 32px; fill: #fff; }
+        @media (min-width: 769px) { .whatsapp-float { bottom: 30px; right: 30px; } }
+
+        /* Footer-like element */
+        .contact-strip { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 12px; 
+            margin-bottom: 28px; 
+            padding: 20px;
+            background: var(--cream);
+            border-radius: var(--radius);
+            border: 1.5px solid var(--border);
+            justify-content: center;
+        }
+        .contact-chip { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: var(--bg-card); 
+            padding: 12px 18px; 
+            border-radius: 30px; 
+            box-shadow: 0 2px 10px rgba(141, 21, 58, 0.06); 
+            text-decoration: none; 
+            color: var(--text); 
+            font-size: 13px; 
+            font-weight: 600; 
+            transition: all var(--transition); 
+            border: 1.5px solid var(--border); 
+        }
+        .contact-chip:hover { 
+            transform: translateY(-3px); 
+            box-shadow: var(--shadow); 
+            border-color: var(--gold);
+            background: var(--cream);
+        }
+        .contact-chip svg { width: 20px; height: 20px; fill: var(--maroon); flex-shrink: 0; }
+        .contact-chip .chip-label { font-weight: 600; color: var(--text-light); font-size: 11px; font-family: var(--font-sinhala-sans); }
+        .contact-chip .chip-value { font-weight: 800; color: var(--maroon-dark); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { 
+                display: none; 
+                position: absolute; 
+                top: var(--nav-height); 
+                left: 0; right: 0; 
+                background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+                flex-direction: column; 
+                padding: 16px; 
+                border-bottom: 3px solid var(--gold); 
+                box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4); 
+                gap: 4px; 
+            }
+            .nav-links.open { display: flex; }
+            .nav-link { width: 100%; text-align: center; padding: 14px; font-size: 15px; }
+            .hamburger { display: flex; }
+            .bottom-nav { display: flex; }
+            .main-content { padding-left: 16px; padding-right: 16px; }
+            .cards-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+            .hero { padding: 32px 24px; border-radius: 14px; }
+            .hero h1 { font-size: 32px; }
+            .section-title { font-size: 24px; }
+            .form-row { grid-template-columns: 1fr; }
+            .admin-header { flex-direction: column; align-items: flex-start; }
+            .admin-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .admin-tab { flex: none; padding: 12px 16px; font-size: 12px; }
+            .lang-switcher { margin-left: auto; }
+            .logo-text { font-size: 18px; }
+            .logo-text small { font-size: 9px; letter-spacing: 1.5px; }
+            .logo-icon { width: 40px; height: 40px; font-size: 18px; }
+        }
+        @media (max-width: 480px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            .card-actions .btn { font-size: 10px; padding: 8px 6px; }
+            .hero h1 { font-size: 28px; }
+            .hero { padding: 28px 20px; }
+            .contact-strip { padding: 14px; gap: 8px; }
+            .contact-chip { padding: 10px 14px; font-size: 12px; }
+            .btn { padding: 12px 20px; font-size: 13px; }
+            .modal-content { padding: 24px 20px; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) { .cards-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); } }
+        @media (min-width: 1025px) { .cards-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; } }
+        @media print { .site-header, .bottom-nav, .whatsapp-float, .toast-container { display: none !important; } .main-content { padding-top: 0; } body { padding-bottom: 0; } }
+    </style>
+</head>
+<body data-lang="si" dir="ltr">
+
+    <div id="preloader"><div class="loader-ring"></div></div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <header class="site-header">
+        <div class="container">
+            <a href="#" class="logo" onclick="navigateTo('home')" aria-label="E-Mix Blog Home">
+                <div class="logo-icon">E</div>
+                <span class="logo-text">E-<span>Mix</span><small>Sri Lanka Blog</small></span>
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <button class="nav-link active" data-page="home" onclick="navigateTo('home')">🏠 <span data-i18n="nav_home">මුල් පිටුව</span></button>
+                <button class="nav-link" data-page="posts" onclick="navigateTo('posts')">📝 <span data-i18n="nav_posts">ලිපි</span></button>
+                <button class="nav-link" data-page="ads" onclick="navigateTo('ads')">📢 <span data-i18n="nav_ads">දැන්වීම්</span></button>
+            </nav>
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="si" onclick="switchLanguage('si')">සිං</button>
+                <button class="lang-btn" data-lang="en" onclick="switchLanguage('en')">EN</button>
+                <button class="lang-btn" data-lang="ta" onclick="switchLanguage('ta')">த</button>
+            </div>
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="bottom-nav-item active" data-page="home" onclick="navigateTo('home')">
+            <svg viewBox="0 0 24 24"><path d="M12 3l9 9h-3v8h-5v-6h-2v6H6v-8H3l9-9z"/></svg>
+            <span data-i18n="nav_home">මුල් පිටුව</span>
+        </button>
+        <button class="bottom-nav-item" data-page="posts" onclick="navigateTo('posts')">
+            <svg viewBox="0 0 24 24"><path d="M20 7h-4V5a2 2 0 00-2-2H10a2 2 0 00-2 2v2H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zm-10-2h4v2h-4V5zm10 16H4V9h16v12z"/></svg>
+            <span data-i18n="nav_posts">ලිපි</span>
+        </button>
+        <button class="bottom-nav-item" data-page="ads" onclick="navigateTo('ads')">
+            <svg viewBox="0 0 24 24"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09A6.02 6.02 0 007.5 3 5.5 5.5 0 002 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.31C18.6 15.36 22 12.28 22 8.5A5.5 5.5 0 0016.5 3z"/></svg>
+            <span data-i18n="nav_ads">දැන්වීම්</span>
+        </button>
+    </nav>
+
+    <main class="main-content" id="mainContent">
+        <section class="page-section active" id="page-home">
+            <div class="hero">
+                <div class="hero-content">
+                    <span class="hero-badge">🇱🇰 ශ්‍රී ලංකාවේ බ්ලොග් අඩවිය</span>
+                    <h1>E-Mix <span class="highlight">බ්ලොග්</span></h1>
+                    <p>ලංකාවේ හදවතින් ලියැවෙන ලිපි, පින්තූර, වීඩියෝ සහ දැන්වීම් - එකම තැනකින්.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" onclick="navigateTo('posts')">📝 ලිපි බලන්න</button>
+                        <button class="btn btn-secondary" onclick="navigateTo('ads')">📢 දැන්වීම් බලන්න</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-strip">
+                <a href="tel:0715205901" class="contact-chip">
+                    <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                    <div><div class="chip-label">දුරකථන</div><div class="chip-value">071 520 5901</div></div>
+                </a>
+                <a href="https://wa.me/94782482855" target="_blank" class="contact-chip">
+                    <svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.41-1.49-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.89 1.22 3.09.15.2 2.11 3.22 5.11 4.51.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35zM12.05 21.79h-.01a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.73.98 1-3.64-.24-.37a9.84 9.84 0 01-1.51-5.25c0-5.45 4.44-9.88 9.9-9.88a9.82 9.82 0 016.99 2.9 9.82 9.82 0 012.9 6.99c0 5.45-4.44 9.88-9.89 9.88zm8.41-18.29A11.8 11.8 0 0012.05 0C5.5 0 .16 5.33.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.31-1.65a11.9 11.9 0 005.68 1.44h.01c6.55 0 11.88-5.33 11.88-11.89 0-3.18-1.24-6.16-3.48-8.4z"/></svg>
+                    <div><div class="chip-label">WhatsApp</div><div class="chip-value">+94 78 248 2855</div></div>
+                </a>
+                <a href="https://web.facebook.com/people/E-Mix/61553416852131/" target="_blank" class="contact-chip">
+                    <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    <div><div class="chip-label">Facebook</div><div class="chip-value">E-Mix</div></div>
+                </a>
+            </div>
+
+            <div class="ad-container"><!-- AdSense slot --></div>
+
+            <h2 class="section-title">🔥 විශේෂාංග ලිපි</h2>
+            <p class="section-subtitle">නවතම සහ ජනප්‍රිය ලිපි</p>
+            <div class="cards-grid" id="homeFeaturedPosts"></div>
+
+            <h2 class="section-title" style="margin-top:32px;">📢 නවතම දැන්වීම්</h2>
+            <p class="section-subtitle">අපගේ අනුග්‍රාහකයින්</p>
+            <div class="cards-grid" id="homeLatestAds"></div>
+        </section>
+
+        <section class="page-section" id="page-posts">
+            <h2 class="section-title">📝 සියලුම ලිපි</h2>
+            <p class="section-subtitle">ඔබගේ කියවීම සඳහා</p>
+            <div class="ad-container"><!-- AdSense slot --></div>
+            <div class="cards-grid" id="allPosts"></div>
+        </section>
+
+        <section class="page-section" id="page-ads">
+            <h2 class="section-title">📢 සියලුම දැන්වීම්</h2>
+            <p class="section-subtitle">අපගේ හවුල්කරුවන්</p>
+            <div class="cards-grid" id="allAdsList"></div>
+        </section>
+
+        <section class="page-section" id="page-admin">
+            <div class="admin-login-form" id="adminLoginForm">
+                <h2>🔐 පරිපාලන පිවිසුම</h2>
+                <p class="subtitle">ඔබගේ විද්‍යුත් ලිපිනය හා මුරපදය ඇතුළත් කරන්න</p>
+                <div class="form-group">
+                    <label>විද්‍යුත් ලිපිනය (Email)</label>
+                    <input type="email" id="adminEmail" placeholder="admin@emix.lk" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label>මුරපදය (Password)</label>
+                    <input type="password" id="adminPassword" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;" onclick="adminLogin()">පිවිසෙන්න</button>
+                <p style="text-align:center;font-size:11px;color:var(--text-light);margin-top:14px;">Default: admin@emix.lk / admin123</p>
+            </div>
+            <div class="admin-dashboard" id="adminDashboard">
+                <div class="admin-header">
+                    <h2>⚙️ පරිපාලන පාලක පැනලය</h2>
+                    <button class="btn btn-outline btn-sm" onclick="adminLogout()">ඉවත් වන්න</button>
+                </div>
+                <div class="admin-tabs" id="adminTabs">
+                    <button class="admin-tab active" data-tab="tab-posts" onclick="switchAdminTab('tab-posts')">📝 ලිපි</button>
+                    <button class="admin-tab" data-tab="tab-ads" onclick="switchAdminTab('tab-ads')">📢 දැන්වීම්</button>
+                    <button class="admin-tab" data-tab="tab-settings" onclick="switchAdminTab('tab-settings')">⚙️ සැකසුම්</button>
+                </div>
+                <div class="admin-panel active" id="tab-posts">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                        <h3 style="font-size:17px;font-weight:700;color:var(--maroon);">ලිපි ලැයිස්තුව</h3>
+                        <button class="btn btn-primary btn-sm" onclick="openAddModal('post')">+ ලිපියක් එක් කරන්න</button>
+                    </div>
+                    <div class="admin-item-list" id="adminPostList"></div>
+                </div>
+                <div class="admin-panel" id="tab-ads">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                        <h3 style="font-size:17px;font-weight:700;color:var(--maroon);">දැන්වීම් ලැයිස්තුව</h3>
+                        <button class="btn btn-primary btn-sm" onclick="openAddModal('ad')">+ දැන්වීමක් එක් කරන්න</button>
+                    </div>
+                    <div class="admin-item-list" id="adminAdList"></div>
+                </div>
+                <div class="admin-panel" id="tab-settings">
+                    <div class="settings-form">
+                        <h3 style="margin-bottom:20px;">ව්‍යාපාර සැකසුම්</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label>අඩවියේ නම</label><input type="text" id="settingsSiteName" value="E-Mix Blog"></div>
+                            <div class="form-group"><label>දුරකථන අංකය</label><input type="text" id="settingsPhone" value="0715205901"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>WhatsApp</label><input type="text" id="settingsWhatsapp" value="94782482855"></div>
+                            <div class="form-group"><label>ස්ථානය</label><input type="text" id="settingsLocation" value="Anuradhapura, Sri Lanka"></div>
+                        </div>
+                        <div class="form-group"><label>Facebook URL</label><input type="url" id="settingsFacebook" value="https://web.facebook.com/people/E-Mix/61553416852131/"></div>
+                        <div class="form-group"><label>පරිපාලන විද්‍යුත් ලිපිනය</label><input type="email" id="settingsAdminEmail" value="admin@emix.lk"></div>
+                        <div class="form-group"><label>පරිපාලන මුරපදය</label><input type="password" id="settingsAdminPassword" value="admin123"></div>
+                        <button class="btn btn-primary" onclick="saveSettings()">සැකසුම් සුරකින්න</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <a href="https://wa.me/94782482855" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.41-1.49-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.89 1.22 3.09.15.2 2.11 3.22 5.11 4.51.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35zM12.05 21.79h-.01a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.73.98 1-3.64-.24-.37a9.84 9.84 0 01-1.51-5.25c0-5.45 4.44-9.88 9.9-9.88a9.82 9.82 0 016.99 2.9 9.82 9.82 0 012.9 6.99c0 5.45-4.44 9.88-9.89 9.88zm8.41-18.29A11.8 11.8 0 0012.05 0C5.5 0 .16 5.33.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.31-1.65a11.9 11.9 0 005.68 1.44h.01c6.55 0 11.88-5.33 11.88-11.89 0-3.18-1.24-6.16-3.48-8.4z"/></svg>
+    </a>
+
+    <div class="modal-overlay" id="addEditModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h3 id="modalTitleLabel">නව අයිතමයක්</h3>
+            <input type="hidden" id="modalEditId"><input type="hidden" id="modalType">
+            <div class="form-group"><label>මාතෘකාව</label><input type="text" id="modalTitleInput" placeholder="මාතෘකාව"></div>
+            <div class="form-group"><label>අන්තර්ගතය</label><textarea id="modalContent" placeholder="ලිපියේ අන්තර්ගතය..."></textarea></div>
+            <div class="form-group"><label>බාහිර සබැඳිය (විකල්ප)</label><input type="url" id="modalLink" placeholder="https://..."></div>
+            <div class="form-group">
+                <label>පින්තූරය උඩුගත කරන්න</label>
+                <input type="file" id="modalImageFile" accept="image/*" onchange="handleImageUpload(event)">
+                <input type="url" id="modalImage" placeholder="URL එක ස්වයංක්‍රීයව පිරේ" readonly style="margin-top:8px;">
+            </div>
+            <div class="form-group">
+                <label>වීඩියෝව උඩුගත කරන්න (විකල්ප)</label>
+                <input type="file" id="modalVideoFile" accept="video/*" onchange="handleVideoUpload(event)">
+                <input type="url" id="modalVideo" placeholder="URL එක ස්වයංක්‍රීයව පිරේ" readonly style="margin-top:8px;">
+            </div>
+            <div class="form-group"><label>වෙනත් සටහන් (විකල්ප)</label><textarea id="modalNotes" placeholder="අමතර තොරතුරු..."></textarea></div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="saveModalItem()">සුරකින්න</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== SUPABASE ====================
+        const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co'; // TODO: පුරවන්න
+        const SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';               // TODO: පුරවන්න
+        const USE_SUPABASE = false; // credentials පිරවූ පසු true කරන්න
+
+        let supabaseClient = null;
+        if (USE_SUPABASE && !SUPABASE_URL.includes('YOUR-PROJECT')) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // State
+        let currentPage = 'home';
+        let currentLanguage = 'si';
+        let isAdminLoggedIn = false;
+        let currentAdminTab = 'tab-posts';
+        let appData = null;
+
+        const DEFAULT_DATA = {
+            settings: {
+                siteName: 'E-Mix Blog', phone: '0715205901', whatsapp: '94782482855',
+                location: 'Anuradhapura, Sri Lanka', facebook: 'https://web.facebook.com/people/E-Mix/61553416852131/',
+                adminEmail: 'admin@emix.lk', adminPassword: 'admin123'
+            },
+            posts: [], ads: []
+        };
+
+        // Data access
+        function getData() {
+            if (appData) return appData;
+            const stored = localStorage.getItem('emix_blog_data');
+            if (stored) {
+                try {
+                    appData = JSON.parse(stored);
+                    if (!appData.settings) appData.settings = { ...DEFAULT_DATA.settings };
+                    if (!appData.posts) appData.posts = [];
+                    if (!appData.ads) appData.ads = [];
+                    return appData;
+                } catch (e) { appData = JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+            } else {
+                appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+            }
+            saveDataToLocal();
+            return appData;
+        }
+
+        async function fetchDataFromSupabase() {
+            if (!USE_SUPABASE || !supabaseClient) return getData();
+            try {
+                const [postsRes, adsRes, settingsRes] = await Promise.all([
+                    supabaseClient.from('posts').select('*').order('created_at', { ascending: false }),
+                    supabaseClient.from('ads').select('*').order('created_at', { ascending: false }),
+                    supabaseClient.from('settings').select('*').eq('id', 'main').maybeSingle()
+                ]);
+                if (postsRes.error || adsRes.error || settingsRes.error) {
+                    console.error('Supabase fetch error:', postsRes.error || adsRes.error || settingsRes.error);
+                    return getData();
+                }
+                const settingsData = settingsRes.data ? {
+                    siteName: settingsRes.data.site_name || 'E-Mix Blog',
+                    phone: settingsRes.data.phone, whatsapp: settingsRes.data.whatsapp,
+                    location: settingsRes.data.location, facebook: settingsRes.data.facebook,
+                    adminEmail: settingsRes.data.admin_email, adminPassword: settingsRes.data.admin_password
+                } : DEFAULT_DATA.settings;
+                appData = {
+                    posts: (postsRes.data || []).map(p => ({ ...p, createdAt: p.created_at })),
+                    ads: (adsRes.data || []).map(a => ({ ...a, createdAt: a.created_at })),
+                    settings: settingsData
+                };
+                saveDataToLocal();
+                return appData;
+            } catch (err) {
+                console.error('Supabase connection error:', err);
+                return getData();
+            }
+        }
+
+        function saveDataToLocal() {
+            if (appData) localStorage.setItem('emix_blog_data', JSON.stringify(appData));
+        }
+
+        async function saveDataToSupabase() {
+            if (!USE_SUPABASE || !supabaseClient || !appData) return;
+            try {
+                for (const item of appData.posts) {
+                    await supabaseClient.from('posts').upsert({
+                        id: item.id, title: item.title, title_en: item.title_en || item.title, title_ta: item.title_ta || item.title,
+                        content: item.content, content_en: item.content_en || item.content, content_ta: item.content_ta || item.content,
+                        image: item.image || '', video: item.video || '', link: item.link || '', notes: item.notes || ''
+                    });
+                }
+                for (const item of appData.ads) {
+                    await supabaseClient.from('ads').upsert({
+                        id: item.id, title: item.title, title_en: item.title_en || item.title, title_ta: item.title_ta || item.title,
+                        content: item.content || '', image: item.image || '', link: item.link || '', notes: item.notes || ''
+                    });
+                }
+                await supabaseClient.from('settings').upsert({
+                    id: 'main', site_name: appData.settings.siteName, phone: appData.settings.phone,
+                    whatsapp: appData.settings.whatsapp, location: appData.settings.location,
+                    facebook: appData.settings.facebook, admin_email: appData.settings.adminEmail,
+                    admin_password: appData.settings.adminPassword
+                });
+            } catch (err) { console.error('Supabase save error:', err); }
+        }
+
+        async function deleteFromSupabase(table, id) {
+            if (!USE_SUPABASE || !supabaseClient) return;
+            try { await supabaseClient.from(table).delete().eq('id', id); } catch (err) { console.error('Delete error:', err); }
+        }
+
+        async function uploadFileToSupabase(file) {
+            if (!USE_SUPABASE || !supabaseClient) { showToast('Supabase සම්බන්ධ නොවී ඇත', 'error'); return null; }
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+            try {
+                const { data, error } = await supabaseClient.storage.from('emix-media').upload(fileName, file, { cacheControl: '3600', upsert: false });
+                if (error) { console.error('Upload error:', error); showToast('Upload failed: ' + error.message, 'error'); return null; }
+                const { data: publicUrlData } = supabaseClient.storage.from('emix-media').getPublicUrl(fileName);
+                return publicUrlData.publicUrl;
+            } catch (err) { console.error('Upload exception:', err); showToast('Upload error: ' + err.message, 'error'); return null; }
+        }
+
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const url = await uploadFileToSupabase(file);
+            if (url) { document.getElementById('modalImage').value = url; showToast('පින්තූරය උඩුගත කළා!', 'success'); }
+        }
+
+        async function handleVideoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const url = await uploadFileToSupabase(file);
+            if (url) { document.getElementById('modalVideo').value = url; showToast('වීඩියෝව උඩුගත කළා!', 'success'); }
+        }
+
+        // Language functions
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            document.body.setAttribute('data-lang', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+            localStorage.setItem('emix_lang', lang);
+            renderAll();
+        }
+
+        function getLocalizedTitle(item) {
+            if (currentLanguage === 'si') return item.title || item.title_en || '';
+            if (currentLanguage === 'en') return item.title_en || item.title || '';
+            if (currentLanguage === 'ta') return item.title_ta || item.title || item.title_en || '';
+            return item.title || '';
+        }
+        function getLocalizedContent(item) {
+            if (currentLanguage === 'si') return item.content || item.content_en || '';
+            if (currentLanguage === 'en') return item.content_en || item.content || '';
+            if (currentLanguage === 'ta') return item.content_ta || item.content || item.content_en || '';
+            return item.content || '';
+        }
+
+        // Navigation
+        function navigateTo(page) {
+            if (page === 'admin') { window.location.hash = '#/admin/login'; return; }
+            if (page === 'home') window.location.hash = '#/';
+            else if (page === 'posts') window.location.hash = '#/posts';
+            else if (page === 'ads') window.location.hash = '#/ads';
+        }
+        function toggleMobileNav() {
+            document.getElementById('navLinks').classList.toggle('open');
+            document.getElementById('hamburgerBtn').classList.toggle('open');
+        }
+
+        function handleHashRouting() {
+            const hash = window.location.hash;
+            const adminSection = document.getElementById('page-admin');
+            const homeSection = document.getElementById('page-home');
+            const postsSection = document.getElementById('page-posts');
+            const adsSection = document.getElementById('page-ads');
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            if (hash.startsWith('#/admin')) {
+                adminSection.classList.add('active');
+                currentPage = 'admin';
+                const loginForm = document.getElementById('adminLoginForm');
+                const dashboard = document.getElementById('adminDashboard');
+                if (isAdminLoggedIn) {
+                    loginForm.style.display = 'none';
+                    dashboard.classList.add('active');
+                    renderAdminLists();
+                } else {
+                    loginForm.style.display = 'block';
+                    dashboard.classList.remove('active');
+                }
+            } else {
+                if (hash === '#/posts') { postsSection.classList.add('active'); currentPage = 'posts'; }
+                else if (hash === '#/ads') { adsSection.classList.add('active'); currentPage = 'ads'; }
+                else { homeSection.classList.add('active'); currentPage = 'home'; }
+                document.querySelectorAll('.nav-link').forEach(n => n.classList.toggle('active', n.dataset.page === currentPage));
+                document.querySelectorAll('.bottom-nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === currentPage));
+                renderAll();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        window.addEventListener('hashchange', handleHashRouting);
+
+        // Render
+        function renderAll() {
+            const data = getData();
+            renderHome(data);
+            renderPosts(data);
+            renderAds(data);
+        }
+
+        function renderHome(data) {
+            const featuredPosts = document.getElementById('homeFeaturedPosts');
+            const posts = data.posts.slice(0, 4);
+            featuredPosts.innerHTML = posts.length === 0 ? `<div class="empty-state"><div class="empty-icon">📝</div><h3>තවමත් ලිපි නොමැත</h3></div>` : posts.map(p => createPostCard(p)).join('');
+            const latestAds = document.getElementById('homeLatestAds');
+            const ads = data.ads.slice(0, 4);
+            latestAds.innerHTML = ads.length === 0 ? `<div class="empty-state"><div class="empty-icon">📢</div><h3>තවමත් දැන්වීම් නොමැත</h3></div>` : ads.map(a => createAdCard(a)).join('');
+        }
+
+        function renderPosts(data) {
+            const container = document.getElementById('allPosts');
+            container.innerHTML = data.posts.length === 0 ? `<div class="empty-state"><div class="empty-icon">📝</div><h3>තවමත් ලිපි නොමැත</h3></div>` : data.posts.map(p => createPostCard(p)).join('');
+        }
+
+        function renderAds(data) {
+            const container = document.getElementById('allAdsList');
+            container.innerHTML = data.ads.length === 0 ? `<div class="empty-state"><div class="empty-icon">📢</div><h3>තවමත් දැන්වීම් නොමැත</h3></div>` : data.ads.map(a => createAdCard(a)).join('');
+        }
+
+        function createPostCard(post) {
+            const title = getLocalizedTitle(post);
+            const content = getLocalizedContent(post);
+            const imageUrl = post.image || '';
+            const videoUrl = post.video || '';
+            const link = post.link || '';
+            let mediaHTML = '';
+            if (imageUrl) {
+                mediaHTML = `<img src="${imageUrl}" alt="${title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="placeholder-img" style="display:none;">📷</div>`;
+            } else if (videoUrl) {
+                mediaHTML = `<video src="${videoUrl}" muted loop playsinline preload="metadata"></video>`;
+            } else {
+                mediaHTML = `<div class="placeholder-img">📝</div>`;
+            }
+            return `
+            <div class="card">
+                <div class="card-media">${mediaHTML}<span class="card-badge">ලිපිය</span></div>
+                <div class="card-body">
+                    <div class="card-title">${title}</div>
+                    <div class="card-desc">${content.substring(0, 150)}${content.length > 150 ? '...' : ''}</div>
+                    <div class="card-meta">${new Date(post.createdAt || Date.now()).toLocaleDateString('si-LK')}</div>
+                    <div class="card-actions">
+                        <button class="btn btn-primary btn-xs" onclick="shareItem('${post.id}', 'post', 'whatsapp')">📤 බෙදාගන්න</button>
+                        <button class="btn btn-secondary btn-xs" style="background:#1877f2;color:#fff;border-color:#1877f2;" onclick="shareToFacebook('${post.id}', 'post')">📘 Facebook</button>
+                        ${link ? `<button class="btn btn-outline btn-xs" onclick="openLink('${link}')">🔗</button>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function createAdCard(ad) {
+            const title = getLocalizedTitle(ad);
+            const content = ad.content || '';
+            const imageUrl = ad.image || '';
+            const link = ad.link || '#';
+            let mediaHTML = '';
+            if (imageUrl) {
+                mediaHTML = `<img src="${imageUrl}" alt="${title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="placeholder-img" style="display:none;">📢</div>`;
+            } else {
+                mediaHTML = `<div class="placeholder-img">📢</div>`;
+            }
+            return `
+            <div class="card">
+                <div class="card-media">${mediaHTML}<span class="card-badge ad">දැන්වීම</span></div>
+                <div class="card-body">
+                    <div class="card-title">${title}</div>
+                    <div class="card-desc">${content.substring(0, 100)}${content.length > 100 ? '...' : ''}</div>
+                    <div class="card-actions">
+                        <button class="btn btn-primary btn-xs" onclick="openLink('${link}')">🔗 වැඩිදුර බලන්න</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // Sharing
+        function shareItem(id, type, platform) {
+            const data = getData();
+            let item = type === 'post' ? data.posts.find(p => p.id === id) : data.ads.find(a => a.id === id);
+            if (item) {
+                const title = getLocalizedTitle(item);
+                const text = encodeURIComponent(`${title} - E-Mix Blog | ශ්‍රී ලංකාව`);
+                const url = encodeURIComponent(window.location.href);
+                if (platform === 'whatsapp') window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+            }
+        }
+
+        function shareToFacebook(id, type) {
+            const data = getData();
+            let item = type === 'post' ? data.posts.find(p => p.id === id) : data.ads.find(a => a.id === id);
+            if (item) {
+                const title = getLocalizedTitle(item);
+                const content = getLocalizedContent(item);
+                const quote = encodeURIComponent(`${title}\n${content.substring(0, 200)}\nE-Mix Blog | ශ්‍රී ලංකාව`);
+                const url = encodeURIComponent(window.location.href);
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank');
+            }
+        }
+
+        function openLink(url) { if (url && url !== '#') window.open(url, '_blank'); }
+
+        // Admin
+        function adminLogin() {
+            const data = getData();
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            if (email === (data.settings.adminEmail || 'admin@emix.lk') && password === (data.settings.adminPassword || 'admin123')) {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem('emix_admin_logged_in', 'true');
+                showToast('පිවිසුම සාර්ථකයි!', 'success');
+                updateAdminUI();
+                document.getElementById('adminPassword').value = '';
+            } else {
+                showToast('පිවිසුම අසාර්ථකයි.', 'error');
+            }
+        }
+
+        function adminLogout() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem('emix_admin_logged_in');
+            showToast('ඔබ ඉවත් වී ඇත.', 'info');
+            updateAdminUI();
+        }
+
+        function updateAdminUI() {
+            const loginForm = document.getElementById('adminLoginForm');
+            const dashboard = document.getElementById('adminDashboard');
+            if (sessionStorage.getItem('emix_admin_logged_in') === 'true') isAdminLoggedIn = true;
+            if (isAdminLoggedIn) {
+                loginForm.style.display = 'none';
+                dashboard.classList.add('active');
+                renderAdminLists();
+            } else {
+                loginForm.style.display = 'block';
+                dashboard.classList.remove('active');
+            }
+        }
+
+        function switchAdminTab(tabId) {
+            currentAdminTab = tabId;
+            document.querySelectorAll('.admin-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+            document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.toggle('active', panel.id === tabId));
+            renderAdminLists();
+        }
+
+        function renderAdminLists() {
+            const data = getData();
+            const postList = document.getElementById('adminPostList');
+            postList.innerHTML = data.posts.length === 0 ? `<div class="empty-state"><p>තවමත් ලිපි නොමැත</p></div>` : data.posts.map(p => `
+                <div class="admin-item">
+                    ${p.image ? `<img src="${p.image}" alt="" onerror="this.style.display='none'">` : '<div style="width:56px;height:56px;border-radius:10px;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;font-size:24px;">📝</div>'}
+                    <div class="admin-item-info"><div class="name">${getLocalizedTitle(p)}</div><div class="meta">${new Date(p.createdAt || Date.now()).toLocaleDateString()}</div></div>
+                    <div class="admin-item-actions">
+                        <button class="btn btn-outline btn-xs" onclick="editItem('${p.id}', 'post')">සංස්කරණය</button>
+                        <button class="btn btn-outline btn-xs" style="color:#e74c3c;border-color:#e74c3c;" onclick="deleteItem('${p.id}', 'post')">මකන්න</button>
+                    </div>
+                </div>`).join('');
+
+            const adList = document.getElementById('adminAdList');
+            adList.innerHTML = data.ads.length === 0 ? `<div class="empty-state"><p>තවමත් දැන්වීම් නොමැත</p></div>` : data.ads.map(a => `
+                <div class="admin-item">
+                    ${a.image ? `<img src="${a.image}" alt="" onerror="this.style.display='none'">` : '<div style="width:56px;height:56px;border-radius:10px;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;font-size:24px;">📢</div>'}
+                    <div class="admin-item-info"><div class="name">${getLocalizedTitle(a)}</div><div class="meta">${a.link || ''}</div></div>
+                    <div class="admin-item-actions">
+                        <button class="btn btn-outline btn-xs" onclick="editItem('${a.id}', 'ad')">සංස්කරණය</button>
+                        <button class="btn btn-outline btn-xs" style="color:#e74c3c;border-color:#e74c3c;" onclick="deleteItem('${a.id}', 'ad')">මකන්න</button>
+                    </div>
+                </div>`).join('');
+        }
+
+        // Modal
+        function openAddModal(type) {
+            document.getElementById('modalTitleLabel').textContent = type === 'post' ? 'නව ලිපියක්' : 'නව දැන්වීමක්';
+            document.getElementById('modalEditId').value = '';
+            document.getElementById('modalType').value = type;
+            document.getElementById('modalTitleInput').value = '';
+            document.getElementById('modalContent').value = '';
+            document.getElementById('modalLink').value = '';
+            document.getElementById('modalImage').value = '';
+            document.getElementById('modalVideo').value = '';
+            document.getElementById('modalNotes').value = '';
+            document.getElementById('modalImageFile').value = '';
+            document.getElementById('modalVideoFile').value = '';
+            document.getElementById('addEditModal').classList.add('open');
+        }
+
+        function editItem(id, type) {
+            const data = getData();
+            let item = type === 'post' ? data.posts.find(p => p.id === id) : data.ads.find(a => a.id === id);
+            if (item) {
+                document.getElementById('modalTitleLabel').textContent = 'සංස්කරණය';
+                document.getElementById('modalEditId').value = id;
+                document.getElementById('modalType').value = type;
+                document.getElementById('modalTitleInput').value = item.title || '';
+                document.getElementById('modalContent').value = item.content || '';
+                document.getElementById('modalLink').value = item.link || '';
+                document.getElementById('modalImage').value = item.image || '';
+                document.getElementById('modalVideo').value = item.video || '';
+                document.getElementById('modalNotes').value = item.notes || '';
+                document.getElementById('addEditModal').classList.add('open');
+            }
+        }
+
+        function closeModal() { document.getElementById('addEditModal').classList.remove('open'); }
+
+        async function saveModalItem() {
+            const data = getData();
+            const id = document.getElementById('modalEditId').value;
+            const type = document.getElementById('modalType').value;
+            const title = document.getElementById('modalTitleInput').value.trim();
+            const content = document.getElementById('modalContent').value.trim();
+            const link = document.getElementById('modalLink').value.trim();
+            const image = document.getElementById('modalImage').value.trim();
+            const video = document.getElementById('modalVideo').value.trim();
+            const notes = document.getElementById('modalNotes').value.trim();
+            if (!title) { showToast('මාතෘකාව අවශ්‍යයි', 'error'); return; }
+            const itemData = { title, title_en: title, title_ta: title, content, content_en: content, content_ta: content, link, image, video, notes };
+            if (type === 'post') {
+                if (id) { const idx = data.posts.findIndex(p => p.id === id); if (idx > -1) data.posts[idx] = { ...data.posts[idx], ...itemData }; }
+                else data.posts.unshift({ ...itemData, id: Date.now().toString() + Math.random().toString(36).substr(2, 6), createdAt: new Date().toISOString() });
+            } else if (type === 'ad') {
+                if (id) { const idx = data.ads.findIndex(a => a.id === id); if (idx > -1) data.ads[idx] = { ...data.ads[idx], ...itemData }; }
+                else data.ads.unshift({ ...itemData, id: Date.now().toString() + Math.random().toString(36).substr(2, 6), createdAt: new Date().toISOString() });
+            }
+            await saveDataToSupabase();
+            saveDataToLocal();
+            closeModal();
+            showToast('සාර්ථකව සුරැකිණි!', 'success');
+            renderAll();
+        }
+
+        async function deleteItem(id, type) {
+            if (!confirm('මෙය මකා දැමීමට ඔබට විශ්වාසද?')) return;
+            const data = getData();
+            if (type === 'post') { data.posts = data.posts.filter(p => p.id !== id); await deleteFromSupabase('posts', id); }
+            else if (type === 'ad') { data.ads = data.ads.filter(a => a.id !== id); await deleteFromSupabase('ads', id); }
+            saveDataToLocal();
+            showToast('මකා දමන ලදී!', 'success');
+            renderAll();
+        }
+
+        async function saveSettings() {
+            const data = getData();
+            data.settings.siteName = document.getElementById('settingsSiteName').value || 'E-Mix Blog';
+            data.settings.phone = document.getElementById('settingsPhone').value || '0715205901';
+            data.settings.whatsapp = document.getElementById('settingsWhatsapp').value || '94782482855';
+            data.settings.location = document.getElementById('settingsLocation').value || 'Anuradhapura, Sri Lanka';
+            data.settings.facebook = document.getElementById('settingsFacebook').value || '';
+            data.settings.adminEmail = document.getElementById('settingsAdminEmail').value || 'admin@emix.lk';
+            data.settings.adminPassword = document.getElementById('settingsAdminPassword').value || 'admin123';
+            await saveDataToSupabase();
+            saveDataToLocal();
+            showToast('සැකසුම් සුරකින ලදී!', 'success');
+            renderAll();
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000);
+        }
+
+        function populateSettingsForm() {
+            if (!appData || !appData.settings) return;
+            const s = appData.settings;
+            document.getElementById('settingsSiteName').value = s.siteName || 'E-Mix Blog';
+            document.getElementById('settingsPhone').value = s.phone || '0715205901';
+            document.getElementById('settingsWhatsapp').value = s.whatsapp || '94782482855';
+            document.getElementById('settingsLocation').value = s.location || 'Anuradhapura, Sri Lanka';
+            document.getElementById('settingsFacebook').value = s.facebook || '';
+            document.getElementById('settingsAdminEmail').value = s.adminEmail || 'admin@emix.lk';
+            document.getElementById('settingsAdminPassword').value = s.adminPassword || 'admin123';
+        }
+
+        async function init() {
+            if (USE_SUPABASE) { await fetchDataFromSupabase(); } else { getData(); }
+            const savedLang = localStorage.getItem('emix_lang') || 'si';
+            switchLanguage(savedLang);
+            if (sessionStorage.getItem('emix_admin_logged_in') === 'true') isAdminLoggedIn = true;
+            setTimeout(() => document.getElementById('preloader').classList.add('hidden'), 400);
+            if (!window.location.hash) window.location.hash = '#/';
+            handleHashRouting();
+            populateSettingsForm();
+            document.getElementById('addEditModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') init();
+    </script>
+</body>
+</html>
